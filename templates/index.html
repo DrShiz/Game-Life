@@ -1,5 +1,11 @@
 {% extends 'base.html' %}
 
 {% block app_content %}
-    <a class="btn btn-primary" href="{{ url_for('life') }}">Create life</a>
+    <form class="form" method="POST" action="/">
+        <span>width</span>
+        <input class='width' type="text" name="width">
+        <span>Height</span>
+        <input class='height' type="text" name="height">
+        <a class="btn btn-primary" href="{{ url_for('life') }}"><button>Create life</button></a>
+    </form>
 {% endblock %}

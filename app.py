@@ -1,13 +1,21 @@
+from crypt import methods
 from pickle import TRUE
 from flask import Flask, render_template
 from game_of_life import GameOfLife
+from flask import request
 
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def main():
-    GameOfLife(25, 25)
+    if request.method == 'POST':
+        width = request.form.get['width']
+        height = request.form.get('height')
+    else:
+        width = 15
+        height = 15
+    GameOfLife(width, height)
     return render_template('index.html')
 
 @app.route('/life')
