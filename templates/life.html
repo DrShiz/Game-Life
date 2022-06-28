@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block app_content %}
+    <a class="btn btn-warning home" href="/">Home</a>
+    <a class="btn btn-info refresh" href="{{ url_for('life') }}">Refresh</a>
+
+    <div class="counter">{{ gom.counter }}</div>
+
+    <table class="world">
+        {% for i in range(gom.world|length) %}
+            <tr>
+                {% for j in range(gom.world[0]|length) %}
+                    {% if gom.world[i][j] %}
+                        <td class="cell living-cell"></td>
+                    {% elif not gom.world[i][j] and gom.old_world[i][j] %}
+                        <td class="cell dead-cell"></td>
+                    {% else %}
+                        <td class="cell"></td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        setInterval( () => window.location.reload(), 1000);
+    </script>
+{% endblock %}
