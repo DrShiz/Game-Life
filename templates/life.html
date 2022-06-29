@@ -2,30 +2,63 @@
 
 {% block app_content %}
     <a class="btn btn-warning home" href="/">Home</a>
-    <a class="btn btn-info refresh" href="{{ url_for('life') }}">Refresh</a>
+    <a class="btn btn-info refresh" type="button" onclick="refresh(manual=true)">Refresh</a>
 
-    <div class="counter">{{ gom.counter }}</div>
+    <div class="counter" id="id_counter">{{ counter }}</div>
 
-    <table class="world">
-        {% for i in range(gom.world|length) %}
-            <tr>
-                {% for j in range(gom.world[0]|length) %}
-                    {% if gom.world[i][j] %}
-                        <td class="cell living-cell"></td>
-                    {% elif not gom.world[i][j] and gom.old_world[i][j] %}
-                        <td class="cell dead-cell"></td>
-                    {% else %}
-                        <td class="cell"></td>
-                    {% endif %}
-                {% endfor %}
-            </tr>
-        {% endfor %}
+    <table class="world" id="id_world">
     </table>
 {% endblock %}
 
 {% block scripts %}
     {{ super() }}
     <script>
-        setInterval( () => window.location.reload(), 1000);
+        function refresh(manual=false) {
+            $.ajax({
+                url: '{{ url_for("life") }}',
+                method: 'post',
+                data:{},
+                success: function(data){
+                    $(id_counter).text(parseInt($(id_counter).text())+1);
+                    var world = data['world']
+                    var old_world = data['old_world']
+                    let table = document.getElementsByClassName('world')[0]
+                    $("#id_world > tr").remove();
+                    for (let i = 0; i < world.length; i++) {
+                        let tr = document.createElement("tr");
+                        for (let j = 0; j < world[0].length; j++) {
+                            if (world[i][j]) {
+                                let td = document.createElement("td");
+                                td.classList.add('cell');
+                                td.classList.add('living-cell');
+                                tr.appendChild(td);
+                            } else if (old_world[i][j] & !world[i][j]) {
+                                let td = document.createElement("td");
+                                td.classList.add('cell');
+                                td.classList.add('dead-cell');
+                                tr.appendChild(td);
+                            } else {
+                                let td = document.createElement("td");
+                                td.classList.add('cell');
+                                tr.appendChild(td);
+                            }
+                        }
+                        table.appendChild(tr);
+                    }
+                },
+                error: function(data) {
+                    console.log(data);
+                },
+                complete: function() {
+                    if (manual == false) {
+                        setTimeout(() => {refresh();}, 1000);
+                    };
+                }
+            });
+        };
+
+        $(document).ready(function() {
+            refresh();
+        });
     </script>
 {% endblock %}

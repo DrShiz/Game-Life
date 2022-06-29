@@ -2,10 +2,40 @@
 
 {% block app_content %}
     <form class="form" method="POST" action="/">
-        <span>width</span>
-        <input class='width' type="text" name="width">
-        <span>Height</span>
-        <input class='height' type="text" name="height">
-        <a class="btn btn-primary" href="{{ url_for('life') }}"><button>Create life</button></a>
+        <label for="id_width">Width</label>
+        <input class='width' type="text" name="width" id="id_width">
+        <label for="id_width">Height</label>
+        <input class='height' type="text" name="height" id="id_height">
+        <button class="btn btn-primary" onclick="check_form()" type="button">Create life</button>
     </form>
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+<script>
+    function check_form() {
+        var width = document.getElementById('id_width').value;
+        var height = document.getElementById('id_height').value;
+        if (/\D/.test(width) | width == '') {
+            alert('Width must be numeric');
+        } else {
+            if (/\D/.test(height) | height == '') {
+                alert('Height must be numeric');
+            } else {
+                $.ajax({
+                    url: '/',
+                    method: 'post',
+                    data:$('form').serialize(),
+                    success: function(data){
+                        console.log(data);
+                    },
+                    error: function(data) {
+                        console.log(data);
+                    }
+                });
+                location.href = '{{ url_for("life") }}';
+            }
+        }
+    }
+</script>
 {% endblock %}

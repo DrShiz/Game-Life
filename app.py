@@ -1,8 +1,6 @@
-from crypt import methods
-from pickle import TRUE
 from flask import Flask, render_template
 from game_of_life import GameOfLife
-from flask import request
+from flask import request, jsonify
 
 
 app = Flask(__name__)
@@ -10,21 +8,23 @@ app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
 def main():
     if request.method == 'POST':
-        width = request.form.get['width']
-        height = request.form.get('height')
+        width = int(request.form['width'])
+        height = int(request.form['height'])
+        GameOfLife(width, height)
+        return {}
     else:
-        width = 15
-        height = 15
-    GameOfLife(width, height)
-    return render_template('index.html')
+        return render_template('index.html')
 
-@app.route('/life')
+@app.route('/life', methods=['GET', 'POST'])
 def life():
-    gom = GameOfLife()
-    if gom.counter > 0:
-        gom.form_new_generation()
-    gom.counter += 1
-    return render_template('life.html', gom=gom)
+    gol = GameOfLife()
+    if gol.counter > 0:
+        gol.form_new_generation()
+    if request.method == 'POST':
+        gol.counter += 1
+        return jsonify(world=gol.world, counter = gol.counter, old_world=gol.old_world)
+    else:
+        return render_template('life.html', counter = gol.counter)
 
 if __name__ == '__main__':
     app.run(debug=True)

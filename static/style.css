@@ -199,5 +199,14 @@ a, table {
 }
 
 .form {
-    margin-top: 250px;
+    margin-top: 380px;
+}
+
+.width, .height {
+    border-radius: 5px;
+    height: 25px;
+}
+
+.height {
+    margin-right: 20px;
 }
